@@ -1,4 +1,4 @@
-from ._util import *
+from ._util import * #imports everthing from ._util
 from ._costModel import *
 
 from scipy.optimize import differential_evolution
