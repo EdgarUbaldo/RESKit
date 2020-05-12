@@ -193,7 +193,7 @@ def removeLeapDay(timeseries):
 
 
 def linearTransition(x, start, stop, invert=False):
-    """Apply a linear transition function to the given data array
+    """Apply a linear transition function to the given data array WWWWWW
 
     * All values less than 'start' are mapped to 0 (or 1, if 'invert' is True)
     * All values greather than 'stop' are mapped to 1 (or 0, if 'invert' is True)
