@@ -6,14 +6,14 @@ from scipy.stats import exponweib
 
 class _BaselineOnshoreTurbine(dict):
     """
-    The baseline onshore turbine is chosen to reflect future trends in wind turbine characteristics.
+    The baseline onshore turbine is chosen to reflect future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
     """
 
 baselineOnshoreTurbine = _BaselineOnshoreTurbine(capacity=4200, hubHeight=120, rotordiam=136, specificPower=289.12230146451577)
 
 def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["rotordiam"]):
     """
-    Suggest turbine characteristics based off an average wind speed and in relation to the 'baseline' onshore turbine.
+    Suggest turbine characteristics based on an average wind speed and in relation to the 'baseline' onshore turbine.
     relationships are derived from turbine data between 2013 and 2017
 
     * Suggested specific power will not go less than 180 W/m2
@@ -58,6 +58,13 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
 
 
 class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight opt")):
+    """ 
+    
+    DOCSTRING NEEDED
+
+    """
+
+    
     def __str__(s):
         out = ""
         out += "Capacity:   %d\n"%int(s.capacity)
@@ -151,6 +158,11 @@ def determineBestTurbine(weibK=2, weibL=7, capacity=(3000,9000), rotordiam=(90,1
 
     # Define scoring function
     def score(x):
+        """ 
+    
+        DOCSTRING NEEDED
+        
+        """
         c,r,h = unpack(x)
         s = np.log(h/roughness)/_s
         pdf = exponweib.pdf(ws, a=1, c=weibK, loc=0, scale=weibL*s)
