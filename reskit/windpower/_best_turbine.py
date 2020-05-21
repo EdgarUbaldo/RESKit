@@ -14,11 +14,32 @@ baselineOnshoreTurbine = _BaselineOnshoreTurbine(capacity=4200, hubHeight=120, r
 def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["rotordiam"]):
     """
     Suggest turbine characteristics based on an average wind speed and in relation to the 'baseline' onshore turbine.
-    relationships are derived from turbine data between 2013 and 2017
+    relationships are derived from turbine data between 2013 and 2017.
 
-    * Suggested specific power will not go less than 180 W/m2
-    * Normalizations chosen for the context of 2050
-        - Such that at 6.7 m/s, a turbine with 4200 kW capacity, 120m hub height, and 136m rotor diameter is chosen
+    Parameters:
+    ----------
+    averageWindspeed : float or int or list
+        Average wind speed at the wind turbine location
+
+    rotordiam : float or int
+        rotor diamter in meters. Default value is 136
+    
+    Returns
+    -------
+    hubHeight : int
+        Suggested hub height in meters
+    specificPower : int
+        Corresponding specific power according to Ryberg et al. [CITE]
+
+    capacity : int
+        Suggested capacity in kW
+
+    Notes
+    -------
+    Normalizations chosen such that at an average wind speed of 6.7 m/s, a turbine with 4200 kW capacity, 120m hub height, and 136m rotor diameter is chosen
+    Suggested specific power will not go less than 180 W/m2. 
+    Minimum hub height allowed keeps 20 m sepatarion distnce beteen the tip of the blade and the floor
+        
     """
     averageWindspeed = np.array(averageWindspeed)
     if averageWindspeed.size>1:
