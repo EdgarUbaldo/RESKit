@@ -2,18 +2,26 @@ from ._util import *
 
 def onshoreTurbineCost(capacity, hubHeight, rotordiam, **k):
     """
-    **NEEDS UPDATE**
-    Onshore wind turbine cost and scaling model (csm) built following [1] and update following [2]. 
-    Considers only the turbine capital cost estimations for a 3-bladed, direct drive turbine.
+    
+    Calculates the wind turbine costs as a fuction of the capacity, hub height and rotor diameter. 
+    
+    The turbine cost and scaling model (csm) was developed following Fingersh et al. [1] and Maples et al. [2] for a 3-bladed, direct drive turbine.
+    Normalization is done such that a chosen baseline turbine with a capacity of 4200 kW, hub height of 120, and rotor diameter of 136m corresponds 
+    to a expected specific typical cost of 1100 Eur/kW. including all costs.
+
+     in a 2050 context according to the 2016 cost of wind energy review by Stehly [3]
     Claimed to be derived from real cost data and valid (for costs at the time) up until 10 MW capacity.
     
-    Base-line (default) turbine characteristics correspond to the expected typical onshore turbine in 2050.
-    Output values are adjusted such that the the baseline onshore turbine matches 1100 Eur/kW including all costs.
-    Only the turbine capital cost (tcc) and balance of system (BOS) costs, amounting to 67.3% and 22.9% [3], is 
-    adjusted according to capacity, rotor diameter, and hub height. Other financial costs are added as fixed 
-    percentages.
+    #Base-line (default) turbine characteristics correspond to the expected typical onshore turbine in 2050.
+    #Output values are adjusted such that the the baseline onshore turbine matches 1100 Eur/kW including all costs.
+    #Only the turbine capital cost (tcc) and balance of system (BOS) costs, amounting to 67.3% and 22.9% [3], is 
+    #adjusted according to capacity, rotor diameter, and hub height. Other financial costs are added as fixed 
+    #percentages.
 
-    Inputs:
+    Suggest turbine hub height and capacity based on an average wind speed and the 'baseline' onshore turbine as per Ryberg et al. [1]
+
+    Parameters:
+    ----------
         capacity : Turbine nameplate capacity in kW
             float - Single value
             np.ndarray - multidimensional values 

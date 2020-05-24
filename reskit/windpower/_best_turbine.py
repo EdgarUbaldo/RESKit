@@ -1,69 +1,70 @@
 from ._util import * #imports everthing from ._util
-from ._costModel import *
+from ._costModel import * #imports everthing from ._costModel
 
-from scipy.optimize import differential_evolution
+from scipy.optimize import differential_evolution 
 from scipy.stats import exponweib
 
 class _BaselineOnshoreTurbine(dict):
     """
-    The baseline onshore turbine is chosen to reflect future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
+    
+    Defines capacity, hub height and rotor diameter of a baseline turbine that reflects future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
+    
     """
 
 baselineOnshoreTurbine = _BaselineOnshoreTurbine(capacity=4200, hubHeight=120, rotordiam=136, specificPower=289.12230146451577)
 
 def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["rotordiam"]):
     """
-    Suggest turbine characteristics based on an average wind speed and in relation to the 'baseline' onshore turbine.
-    relationships are derived from turbine data between 2013 and 2017.
+    Suggest turbine hub height and capacity based on an average wind speed and the 'baseline' onshore turbine as per Ryberg et al. [1]
 
     Parameters:
     ----------
-    averageWindspeed : float or int or list
-        Average wind speed at the wind turbine location
+    averageWindspeed : float or array_like
+        Average wind speed close at close to the hub height.
 
-    rotordiam : float or int
-        rotor diamter in meters. Default value is 136
+    rotordiam : float or array_like, optional
+        Rotor diamter in meters. Default value is 136 
     
     Returns
     -------
-    hubHeight : int
-        Suggested hub height in meters
-    specificPower : int
-        Corresponding specific power according to Ryberg et al. [CITE]
-
-    capacity : int
-        Suggested capacity in kW
+    Turbine suggested characteristcs: pandas data frame.
+        A pandas data frame with columns hub height in m, specific power in W/m2, and capacity in kW
 
     Notes
     -------
-    Normalizations chosen such that at an average wind speed of 6.7 m/s, a turbine with 4200 kW capacity, 120m hub height, and 136m rotor diameter is chosen
-    Suggested specific power will not go less than 180 W/m2. 
-    Minimum hub height allowed keeps 20 m sepatarion distnce beteen the tip of the blade and the floor
-        
-    """
-    averageWindspeed = np.array(averageWindspeed)
-    if averageWindspeed.size>1:
-        multi=True
-        rotordiam = np.array([rotordiam]*averageWindspeed.size)
-    else:
-        multi=False
+    Suggestions are given such that with an average wind speed of 6.7 m/s, a turbine with 4200 kW capacity, 120m hub height, and 136m rotor diameter is chosen
+    Specific power (capacity/rotor area) of the suggested turbine will not go less than 180 W/m2. 
+    A minimum hub height to keep 20 m sepatarion distnce beteen the tip of the blade and the floor is maintaied.
+    
+    References
+    -------
+    [1] {Ryberg, 2019 #144}{Ryberg, 2019 #144}
 
-    hubHeight = 1.24090975567715489091824565548449754714965820312500*np.exp(-0.84976623*np.log(averageWindspeed)+6.1879937)
+
+    """
+    averageWindspeed = np.array(averageWindspeed) #trasformes the object into a numpy array
+    if averageWindspeed.size>1: #if it has more than one element
+        multi=True # indicates that many elements are need to be evaluated
+        rotordiam = np.array([rotordiam]*averageWindspeed.size) #sets the rotor diameter value (136 m)
+    else:   
+        multi=False #indicates that there is only one value
+
+    hubHeight = 1.24090975567715489091824565548449754714965820312500*np.exp(-0.84976623*np.log(averageWindspeed)+6.1879937) #sets hub height
     if multi:
-        lt20 = hubHeight<(rotordiam/2+20)
+        lt20 = hubHeight<(rotordiam/2+20) #kees the 20 m tip-to-floor distnace
         if lt20.any():
             hubHeight[lt20] = rotordiam[lt20]/2 + 20
         # gt200 = hubHeight>200
-        # if gt200.any():
+        # if gt200.any():                                                                                                   ## can wee delete this lt >200 = 200 ??
         #     hubHeight[gt200] = 200
     else:
-        if hubHeight<(rotordiam/2+20): hubHeight = rotordiam/2 + 20
-        # if hubHeight>200: hubHeight = 200
+        if hubHeight<(rotordiam/2+20): hubHeight = rotordiam/2 + 20 
+        # if hubHeight>200: hubHeight = 200                                                                                 ## can wee delete this lt >200 = 200 ??
     
-    specificPower = 0.90025957072652906809651085495715960860252380371094*np.exp(0.53769024 *np.log(averageWindspeed)+4.74917728)
+    specificPower = 0.90025957072652906809651085495715960860252380371094*np.exp(0.53769024 *np.log(averageWindspeed)+4.74917728) #sets the specific power
     if multi:
         lt180 = specificPower<180
-        if lt180.any():
+        if lt180.any(): #sets the minimum specific power to 180
             specificPower[lt180] = 180
     else:
         if specificPower<180: specificPower = 180
@@ -81,8 +82,8 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
 class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight opt")):
     """ 
     
-    DOCSTRING NEEDED
-
+    Defines capacity, hub height and rotor diameter of a baseline turbine that reflects future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
+    
     """
 
     
