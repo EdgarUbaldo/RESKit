@@ -7,7 +7,12 @@ from scipy.stats import exponweib
 class _BaselineOnshoreTurbine(dict):
     """
     
-    Defines capacity, hub height and rotor diameter of a baseline turbine that reflects future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
+    Defines a "baseline" onshore wind turbine with capacity = 42000 kW, hub height = 120 m, and rotor diameter = 136 m that is thought to reflect future trends 
+    in wind turbine characteristics (in 2050) according to Ryberg et al. [1]
+
+    References:
+    ----------
+    [1] 
     
     """
 
@@ -15,30 +20,30 @@ baselineOnshoreTurbine = _BaselineOnshoreTurbine(capacity=4200, hubHeight=120, r
 
 def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["rotordiam"]):
     """
-    Suggest turbine hub height and capacity based on an average wind speed and the 'baseline' onshore turbine as per Ryberg et al. [1]
+    Suggest onshore turbine hub height and capacity values based on an average wind speed and the "baseline" onshore turbine as per Ryberg et al. [1]
 
     Parameters:
     ----------
     averageWindspeed : float or array_like
-        Average wind speed close at close to the hub height.
+        Local average wind speed close to or at the hub height
 
     rotordiam : float or array_like, optional
         Rotor diamter in meters. Default value is 136 
     
     Returns
     -------
-    Turbine suggested characteristcs: pandas data frame.
+    Onshore turbine suggested characteristcs: pandas data frame.
         A pandas data frame with columns hub height in m, specific power in W/m2, and capacity in kW
 
     Notes
     -------
-    Suggestions are given such that with an average wind speed of 6.7 m/s, a turbine with 4200 kW capacity, 120m hub height, and 136m rotor diameter is chosen
-    Specific power (capacity/rotor area) of the suggested turbine will not go less than 180 W/m2. 
+    Suggestions are given such that with an average wind speed value of 6.7 m/s, a turbine with 4200 kW capacity, 120m hub height, and 136m rotor diameter is chosen
+    The specific power (capacity/area of the rotor) is not permited to go less than 180 W/m2 (becase...)
     A minimum hub height to keep 20 m sepatarion distnce beteen the tip of the blade and the floor is maintaied.
     
     References
     -------
-    [1] {Ryberg, 2019 #144}{Ryberg, 2019 #144}
+    [1] {Ryberg, 2019 #144}
 
 
     """
@@ -79,7 +84,7 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
 
 
 
-class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight opt")):
+class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight opt")):                                                #### I did not use this, right?
     """ 
     
     Defines capacity, hub height and rotor diameter of a baseline turbine that reflects future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
@@ -87,7 +92,7 @@ class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight o
     """
 
     
-    def __str__(s):
+    def __str__(s): #"s" is short for a string?
         out = ""
         out += "Capacity:   %d\n"%int(s.capacity)
         out += "Rotor Diam: %d\n"%int(s.rotordiam)
@@ -98,49 +103,61 @@ class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight o
 
 def determineBestTurbine(weibK=2, weibL=7, capacity=(3000,9000), rotordiam=(90,180), hubHeight=(80,200), roughness=0.02, costModel=onshoreTurbineCost, measuredHeight=50, minSpecificCapacity=200, groundClearance=25, tol=1e-5, **kwargs):
     """
-    Determine the best turbine characteristics (capacity, rotor diameter, and hub height) for a location defined by a 
-    weibul distribution of windspeeds and a roughness length
+    A genetic algorithm to determine the cost-performance optimal onshore turbine characteristics (capacity, rotor diameter, and hub height) for a determined location.
+    
+    Parameters:
+    ----------
+        weibK : float 
+            Weibull k parameter describing the location's wind speed distribution.
 
-    * A genetic algorithm is used to find the "optimal" solution
-    * A synthetic turbine power curve is always generated according to the given capacity and rotor diameter
-    * All characteristic inputs (capacity, rotordiam, hubHeight) can be given as a tuple, indicating an allowable 
-      range, or a descrete value
+        weibL : float
+            Weibull lambda parameter describing the location's wind speed distribution.
 
-    Inputs:
-        weibK : float - Weibull k parameter describing the location's wind speed distribution
+        capacity : float or tuple(float,float)
+            if float, it will be considered as explicit value and won't be optimized.
+            if tuple, it should represent the allowable minimal and maximal capacity values in kW.
 
-        weibL : float - Weibull lambda parameter describing the location's wind speed distribution
+        rotordiam : float or tuple(float,float)
+            if float, it will be considered as explicit value and won't be optimized.
+            if tuple, it should represent the allowable minimal and maximal rotor diamter values in m.
 
-        Capacity : The allowable capacity value(s) in kW
-            ( float, float ) - minimal and maximal value
-            float - The explicit value to use
+        hubHeight : float or tuple(float,float)
+            if float, it will be considered as explicit value and won't be optimized.
+            if tuple, it should represent the allowable minimal and maximal hub heights values in m.
 
-        rotordiam : The allowable rotor diameter value(s) in m
-            ( float, float ) - minimal and maximal value
-            float - The explicit value to use
+        roughness : float
+            The roughness length value of the onshore turbine location.
 
-        hubHeight : The allowable hub height value(s) in m
-            ( float, float ) - minimal and maximal value
-            float - The explicit value to use
+        costModel : callable
+            The cost model fuction to be used for calculatiing the onshore turbine's cost. The cost function must accept keyword arguments 
+            capacity, rotordiam, and hubHeight and return a single float value.
 
-        roughness : float - The location roughness length
+        measuredHeight : float
+            The implied height at which the given windspeed distribution was determined.
 
-        costModel : func - The cost model to use to estimate the turbine's cost
-            * Must be a function which accepts keyword arguments of capacity, rotordiam, and hubHeight and returns a
-              single float value
+        minSpecificCapacity : float or None
+            The minimal specific-capacity value to allow during the optimization
+            if None, it will imply no minimum speficic capacity limit.
 
-        measuredHeight : float - The implied height of the given windspeed distribution
+        groundClearance : float
+            The minimal height allowed between ground and the rotor tip in m.
 
-        minSpecificCapacity : float - The minimal specific-capacity value to allow during the optimization
-            * Can be 'None', implying no minimum
+        tol : float, optional
+            The tolerance to use during the optimization. Default is 1e-5. See scipy.optimize.differential_evolution for more information.
 
-        groundClearance : float - The minimal height in meters above ground which the rotor tip should reach
+        **kwargs: key word arguments, optional
+            All other kwargs are passed on to scipy.optimize.differential_evolution
 
-        tol : float - The tolerance to use during the optimization
-            * See scipy.optimize.differential_evolution for more information
+    Returns
+    -------
+        **I NEED TO DIG DEEPER IN THIS**
+    
+    Notes:
+    ------
+        A synthetic turbine power curve is always generated according to the given capacity and rotor diameter
+        *I NEED TO PROVIDE MORE DETAILS**
+    -------
 
-        **kwargs
-            * All other kwargs are passed on to scipy.optimize.differential_evolution
     """
     ws = np.linspace(0,40,4000)
     dws = ws[1]-ws[0]
