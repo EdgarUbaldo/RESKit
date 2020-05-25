@@ -9,7 +9,7 @@ def onshoreTurbineCost(capacity, hubHeight, rotordiam, **k):
     Normalization is done such that a chosen baseline turbine with a capacity of 4200 kW, hub height of 120, and rotor diameter of 136m corresponds 
     to a expected specific typical cost of 1100 Eur/kW. including all costs.
 
-     in a 2050 context according to the 2016 cost of wind energy review by Stehly [3]
+    in a 2050 context according to the 2016 cost of wind energy review by Stehly [3]
     Claimed to be derived from real cost data and valid (for costs at the time) up until 10 MW capacity.
     
     #Base-line (default) turbine characteristics correspond to the expected typical onshore turbine in 2050.

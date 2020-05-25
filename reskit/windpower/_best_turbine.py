@@ -10,6 +10,10 @@ class _BaselineOnshoreTurbine(dict):
     Defines a "baseline" onshore wind turbine with capacity = 42000 kW, hub height = 120 m, and rotor diameter = 136 m that is thought to reflect future trends 
     in wind turbine characteristics (in 2050) according to Ryberg et al. [1]
 
+    Returns
+    -------
+    Onshore baseline turbine characteristcs: dictionary
+
     References:
     ----------
     [1] 
@@ -25,15 +29,15 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
     Parameters:
     ----------
     averageWindspeed : float or array_like
-        Local average wind speed close to or at the hub height
+        Local average wind speed close to or at the hub height.
 
     rotordiam : float or array_like, optional
-        Rotor diamter in meters. Default value is 136 
+        Rotor diamter in meters. Default value is 136.
     
     Returns
     -------
-    Onshore turbine suggested characteristcs: pandas data frame.
-        A pandas data frame with columns hub height in m, specific power in W/m2, and capacity in kW
+    Onshore turbine suggested characteristcs: pandas data frame
+        A pandas data frame with columns hub height in m, specific power in W/m2, and capacity in kW.
 
     Notes
     -------
@@ -87,8 +91,14 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
 class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight opt")):                                                #### I did not use this, right?
     """ 
     
-    Defines capacity, hub height and rotor diameter of a baseline turbine that reflects future trends in wind turbine characteristics accoiring to Ryberg et al. [CITE]
+    Determines a cost-performance optimal onshore turbine according to a given cost model fuction and wind, terrain, 
+    and turbine characteristics.
     
+    Returns
+    -------
+    Optimal onshore turbine characteristcs: namedtuple
+
+
     """
 
     
@@ -103,7 +113,7 @@ class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight o
 
 def determineBestTurbine(weibK=2, weibL=7, capacity=(3000,9000), rotordiam=(90,180), hubHeight=(80,200), roughness=0.02, costModel=onshoreTurbineCost, measuredHeight=50, minSpecificCapacity=200, groundClearance=25, tol=1e-5, **kwargs):
     """
-    A genetic algorithm to determine the cost-performance optimal onshore turbine characteristics (capacity, rotor diameter, and hub height) for a determined location.
+    A genetic function to determine the cost-performance optimal onshore turbine characteristics (capacity, rotor diameter, and hub height) for a determined location.
     
     Parameters:
     ----------
@@ -145,12 +155,13 @@ def determineBestTurbine(weibK=2, weibL=7, capacity=(3000,9000), rotordiam=(90,1
         tol : float, optional
             The tolerance to use during the optimization. Default is 1e-5. See scipy.optimize.differential_evolution for more information.
 
-        **kwargs: key word arguments, optional
-            All other kwargs are passed on to scipy.optimize.differential_evolution
+        **kwargs:
+            Key word arguments accepted by scipy.optimize.differential_evolution
 
     Returns
     -------
-        **I NEED TO DIG DEEPER IN THIS**
+        #### WHAT? Optimal onshore turbine characteristcs: namedtuple
+
     
     Notes:
     ------
