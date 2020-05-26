@@ -16,7 +16,8 @@ class _BaselineOnshoreTurbine(dict):
 
     References:
     ----------
-    [1] 
+    [1] David S. Ryberg, Dilara C. Caglayana, Sabrina Schmitt, Jochen Linßena, Detlef Stolten, Martin Robinius - The Future of European Onshore Wind Energy Potential: 
+    Detailed Distributionand Simulation of Advanced Turbine Designs, Energy, 2019, aávailable at https://www.sciencedirect.com/science/article/abs/pii/S0360544219311818
     
     """
 
@@ -47,8 +48,8 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
     
     References
     -------
-    [1] {Ryberg, 2019 #144}
-
+    [1] David S. Ryberg, Dilara C. Caglayana, Sabrina Schmitt, Jochen Linßena, Detlef Stolten, Martin Robinius - The Future of European Onshore Wind Energy Potential: 
+    Detailed Distributionand Simulation of Advanced Turbine Designs, Energy, 2019, aávailable at https://www.sciencedirect.com/science/article/abs/pii/S0360544219311818
 
     """
     averageWindspeed = np.array(averageWindspeed) #trasformes the object into a numpy array
@@ -90,14 +91,12 @@ def suggestOnshoreTurbine(averageWindspeed, rotordiam=baselineOnshoreTurbine["ro
 
 class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight opt")):                                                #### I did not use this, right?
     """ 
-    
     Determines a cost-performance optimal onshore turbine according to a given cost model fuction and wind, terrain, 
     and turbine characteristics.
     
     Returns
     -------
     Optimal onshore turbine characteristcs: namedtuple
-
 
     """
 
@@ -113,7 +112,8 @@ class OptimalTurbine(namedtuple("OptimalTurbine","capacity rotordiam hubHeight o
 
 def determineBestTurbine(weibK=2, weibL=7, capacity=(3000,9000), rotordiam=(90,180), hubHeight=(80,200), roughness=0.02, costModel=onshoreTurbineCost, measuredHeight=50, minSpecificCapacity=200, groundClearance=25, tol=1e-5, **kwargs):
     """
-    A genetic function to determine the cost-performance optimal onshore turbine characteristics (capacity, rotor diameter, and hub height) for a determined location.
+    A genetic function to determine the cost-performance optimal onshore turbine characteristics (capacity, rotor diameter, and hub height) according to a
+    cost model and the location's wind and terrain caracteristics.
     
     Parameters:
     ----------
@@ -160,13 +160,13 @@ def determineBestTurbine(weibK=2, weibL=7, capacity=(3000,9000), rotordiam=(90,1
 
     Returns
     -------
-        #### WHAT? Optimal onshore turbine characteristcs: namedtuple
+        ####################### WHAT? Optimal onshore turbine characteristcs: namedtuple
 
     
     Notes:
     ------
         A synthetic turbine power curve is always generated according to the given capacity and rotor diameter
-        *I NEED TO PROVIDE MORE DETAILS**
+        #######################*I NEED TO PROVIDE MORE DETAILS**
     -------
 
     """
