@@ -2,6 +2,7 @@ from ._util import *
 
 def onshoreTurbineCost(capacity, hubHeight, rotordiam, **k):
     """
+    ##THIS IS A DUMN COMMENT 
     
     Calculates the wind turbine costs as a fuction of the capacity, hub height and rotor diameter. 
     
